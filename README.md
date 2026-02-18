@@ -10,7 +10,7 @@ wild-type and a modified organism, a healthy and diseased varient, or an untreat
 of an organisms development? Developmental biology can be complex, and there are many factors to take into account when analyzing developmental data. I wanted to put together a guide
 for bulk RNA-seq analysis taking into account best practices for developmental data. 
 
-For the past 6 years I have been working on analyzing a multiomics dataset consisting of bulk RNA-seq and ATAC-seq tissue samples through multiple stages of development. 
+For the past few years, I have been researching and learning methods for analyzing multiomics datasets. The most recent dataset I worked with consisted of bulk RNA-seq and ATAC-seq tissue samples through multiple stages of development. 
 This guide will focus on the RNA-seq analysis part of the analysis pipeline. 
 
 <img width="740" height="214" alt="Image" src="https://github.com/user-attachments/assets/34c506a3-b08e-491b-967d-265ae3e1377c" />
