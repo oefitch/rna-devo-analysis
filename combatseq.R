@@ -1,6 +1,6 @@
 # Load necessary libraries
 
-setwd("/mnt/research/FishEvoDevoGeno/Fitch/tail_multiomics/RNA_analysis/batch_effects")
+setwd() #ADD YOUR WORKING DIRECTORY
 
 library(sva)
 library(edgeR)
@@ -9,9 +9,12 @@ library(pheatmap)
 library(rtracklayer)
 
 # List of sample IDs
-samples <- c("CF1_1", "CF2", "CF3", "CF4", "CF5", "CF6", "CF7", "CF8", "CF9", 
-             "CR1", "CR2", "CR3", "CR4", "CR5", "CR6", "CR7", "CR8", "CR9", 
-             "NE1_1", "NE2", "NE3", "NE4", "NE5", "NE6", "NE7", "NE8", "NE9")
+samples <- c() #Add a list of your sample names, for this script the files are titled "SAMPLENAME_RNA_counts.csv"
+               #you will need to update line 24 if your files follow a different naming convention
+batch <- c() #Add the batch numbers that matches your samples in the same order as you listed samples
+tissue <- c() #Add different tissue types, or ignore this if you don't have multiple tissue types
+stage <- c() #Add the developmental stages for your samples, sometimes developmental stages are complicated so I gave them a number value
+cov_mat <- cbind (tissue, stage) #you can remove this and make group = stage and remove the covar_mod from line 41)
 
 # Initialize an empty list to store data frames
 counts_list <- list()
@@ -26,7 +29,7 @@ for (sample in samples) {
 geneCounts <- do.call(cbind, lapply(counts_list, function(df) df[,2]))  # Extracts count column
 row.names(geneCounts) <- counts_list[[1]][,1]  # Use gene names from the first dataset
 
-# Remove special lines (e.g., "__no_feature", "__ambiguous", etc.)
+# Remove special lines (e.g., "__no_feature", "__ambiguous", etc.) that is a result of HTseq
 toRmv <- which(grepl("__", row.names(geneCounts)))
 geneCounts <- geneCounts[-toRmv,]
 
@@ -35,47 +38,5 @@ colnames(geneCounts) <- samples
 
 # Reduce batch effects 
 counts <- geneCounts
-batch <- c(2, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2)
-adjusted_counts <- ComBat_seq(counts = counts, batch = batch, group = NULL, covar_mod = NULL, full_mod = TRUE, shrink = FALSE, shrink.disp = FALSE, gene.subset.n = NULL)
-
-# Create a condition vector based on prefixes
-condition <- ifelse(grepl("^CF", samples), "CF",
-             ifelse(grepl("^CR", samples), "CR", "NE"))
-
-# Convert condition to a factor
-condition <- factor(condition, levels = c("CF", "CR", "NE"))
-
-# Create DGEList object
-
-dge <- DGEList(counts = adjusted_counts, group = condition)
-
-# Filter lowly expressed genes
-keep <- filterByExpr(dge)
-dge <- dge[keep, , keep.lib.sizes=FALSE]
-
-# Normalize data using TMM normalization
-dge <- calcNormFactors(dge)
-
-# Generate design matrix for differential expression analysis
-
-design <- model.matrix(~condition)
-
-# Estimate dispersions
-
-dge <- estimateDisp(dge, design)
-
-# Perform differential expression analysis using exact test
-fit <- glmQLFit(dge, design)
-qlf <- glmQLFTest(fit)
-
-# Extract differentially expressed genes
-results <- topTags(qlf, n = Inf)$table
-
-# Save results to a CSV file
-write.csv(results, file = "edgeR_DE_results.csv")
-
-# Print summary of DE results
-summary(decideTests(qlf))
-
-# Plot MDS (Multidimensional Scaling) for sample similarity
-plotMDS(dge, col = as.numeric(condition))
+adjusted_counts <- ComBat_seq(counts = counts, batch = batch, group = NULL, covar_mod = cov_mat, 
+                              full_mod = TRUE, shrink = FALSE, shrink.disp = FALSE, gene.subset.n = NULL)
