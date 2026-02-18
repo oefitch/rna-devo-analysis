@@ -11,7 +11,7 @@ for bulk RNA-seq analysis taking into account best practices for developmental d
 For the past 6 years I have been working on analyzing a multiomics dataset consisting of bulk RNA-seq and ATAC-seq tissue samples through multiple stages of development. 
 This guide will focus on the RNA-seq analysis part of the analysis pipeline. 
 
-![analysis pipeline](analysis.tiff)
+<img width="740" height="214" alt="Image" src="https://github.com/user-attachments/assets/34c506a3-b08e-491b-967d-265ae3e1377c" />
 
 ## Read Counts 
 
