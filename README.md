@@ -27,11 +27,13 @@ Make sure to download the most [recent version](https://htseq.readthedocs.io/en/
 htseq-count -f bam $FINAL.bam REFERENCE_GENOME.gtf -c $COUNTS.csv
 ```
 
+After running this, you should have a `.csv` file with your read counts for your sample. Yay! 
+
 ## Batch Effects
 
+After identifying read counts, now we are going to consider batch effects. Often times in genomics reserach, we will send off our sampels for sequencing in batches. Maybe you'll run a few just to test, and then you'll send the rest when you have the funds. Samples beigng sequenced on different days, potenitally on different machines, this can lead to batch effects that artificially make your samples seem more different or more similar than they actually are. You can minimize these effects using software tools designed to adjust fro batch effects. 
 
-
-## Differential Analysis
+## Differential Analysis: Identifying Differentially Expressed Genes (DEGs)
 
 ### Normalization
 In the case of developmental data , we're often not comparing upregulated and downregulated genes within one sample, but upregulated and downregulated genes between samples. 
