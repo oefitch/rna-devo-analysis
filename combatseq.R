@@ -40,3 +40,6 @@ colnames(geneCounts) <- samples
 counts <- geneCounts
 adjusted_counts <- ComBat_seq(counts = counts, batch = batch, group = NULL, covar_mod = cov_mat, 
                               full_mod = TRUE, shrink = FALSE, shrink.disp = FALSE, gene.subset.n = NULL)
+
+# Write CSV file with final adjusted counts 
+write.csv(adjusted_counts, file = "adjusted_counts.csv", row.names = TRUE)
