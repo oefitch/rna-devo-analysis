@@ -31,9 +31,19 @@ After running this, you should have a `.csv` file with your read counts for your
 
 ## Batch Effects
 
-After identifying read counts, now we are going to consider batch effects. Often times in genomics reserach, we will send off our sampels for sequencing in batches. Maybe you'll run a few just to test, and then you'll send the rest when you have the funds. Samples beigng sequenced on different days, potenitally on different machines, this can lead to batch effects that artificially make your samples seem more different or more similar than they actually are. You can minimize these effects using software tools designed to adjust fro batch effects. 
+After identifying read counts, now we are going to consider batch effects. Often times in genomics research, we will send off our sampels for sequencing in batches. Maybe you'll run a few just to test, and then you'll send the rest when you have the funds. Samples being sequenced through different methods, potenitally on different machines, this can lead to batch effects that artificially make your samples seem more different or more similar than they actually are. You can minimize these effects using software tools designed to adjust for batch effects. 
+
+I used `ComBat-seq` to minimize batch effects. I also assigned some additonal covariates because when considering developmental samples, there may be multiple biological variables in your samples. In my case, I was dealing with samples from different tissues at different time points, so I wanted to account for that in my model. Take a look at the `covar_mod` parameter in the `ComBat-seq` [documentation](https://github.com/zhangyuqing/ComBat-seq).
+
+Use the [combatseq.R](https://github.com/oefitch/rna-devo-analysis/blob/main/combatseq.R) script in this repository to account for batch effects and make an adjusted counts `.csv' file that you can use for further analysis.
+
+Now that you have your adjusted counts, you can down perform downstream analysis and make some pretty pictures! Let's get started. 
 
 ## Differential Analysis: Identifying Differentially Expressed Genes (DEGs)
 
 ### Normalization
-In the case of developmental data , we're often not comparing upregulated and downregulated genes within one sample, but upregulated and downregulated genes between samples. 
+In the case of developmental data, we're often not comparing upregulated and downregulated genes within one sample, but upregulated and downregulated genes between samples. Because of this, we need to pick the right type of normalization. 
+
+There are several ways to normalize gene counts, two of the popular ways are to calculate transcripts per million (TPM) or trimmed mean of m-values (TMM), but there are plenty others. When choosing the normalization method to use, it's important to consider what types of comparisons you'll be making. With developmental data, it is likely that you will be comparing gene expression between samples, not just within one sample. It is common to make the mistake of choosng the wrong normalization method when comparing between samples, methods like TPM and RPKM are not designed for compairng between samples [(Zhao et al., 2020)](https://pmc.ncbi.nlm.nih.gov/articles/PMC7373998/). This means that we will need to choose a normalization method that normalizes across samples so that samples can be compared. TMM is a good method for this. The normalization methods that are built in to edgeR and DEseq are also acceptable methods.
+
+
